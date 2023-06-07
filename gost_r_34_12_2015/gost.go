@@ -12,7 +12,7 @@ import (
 	"fmt"
 	"unsafe"
 
-	ghash "github.com/number571/go-cryptopro/gost_r_34_11_2012"
+	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
 )
 
 var (
@@ -123,7 +123,7 @@ func encrypt(data, key, iv []byte) []byte {
 	)
 	reslen := C.Encrypt(datptr, (C.uint)(datlen), keyptr, (C.uint)(len(key)), vecptr)
 	if reslen < 0 {
-		panic(fmt.Errorf("error code: %d", reslen))
+		panic(fmt.Errorf("error code: %v", reslen))
 	}
 	return C.GoBytes(unsafe.Pointer(datptr), reslen)
 }

@@ -11,15 +11,15 @@ import (
 	"fmt"
 	"unsafe"
 
-	ghash "github.com/number571/go-cryptopro/gost_r_34_11_2012"
+	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
 )
 
 func init() {
-	GenPrivKey(&Config{
-		prov:      K256,
-		container: "init",
-		password:  "init",
-	})
+	//GenPrivKey(&Config{
+	//	prov:      K256,
+	//	container: "init",
+	//	password:  "init",
+	//})
 }
 
 var (
@@ -206,7 +206,7 @@ func (key PrivKey256) Sign(dbytes []byte) ([]byte, error) {
 	var (
 		datlen = len(dbytes)
 		reslen C.uint
-		prov = key.prov()
+		prov   = key.prov()
 	)
 
 	result := C.SignMessage(

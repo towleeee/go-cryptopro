@@ -1,3 +1,3 @@
-module github.com/number571/go-cryptopro
+module github.com/towleeee/go-cryptopro
 
-go 1.15
+go 1.17

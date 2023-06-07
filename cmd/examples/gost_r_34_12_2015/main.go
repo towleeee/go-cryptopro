@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 
-	gcipher "github.com/number571/go-cryptopro/gost_r_34_12_2015"
+	gcipher "github.com/towleeee/go-cryptopro/gost_r_34_12_2015"
 )
 
 func main() {

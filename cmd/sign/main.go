@@ -9,8 +9,8 @@ import (
 	"os"
 	"strings"
 
-	gkeys "github.com/number571/go-cryptopro/gost_r_34_10_2012"
-	ghash "github.com/number571/go-cryptopro/gost_r_34_11_2012"
+	gkeys "github.com/towleeee/go-cryptopro/gost_r_34_10_2012"
+	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
 )
 
 // Example:

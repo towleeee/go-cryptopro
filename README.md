@@ -1,6 +1,6 @@
 # Go КриптоПро
 > Интерфейсы адаптированы под ядро Tendermint
-> https://github.com/number571/tendermint
+> https://github.com/towleeee/tendermint
 
 ### Реализация
 * ГОСТ Р 34.10-2012 (ЭЦП, ЭК)
@@ -11,7 +11,7 @@
 ### Установка
 1. Скачать CSP 5.0 https://www.cryptopro.ru/products/csp/downloads
 2. Разархивировать и установить командой `./install.sh`
-3. Скачать `git clone github.com/number571/go-cryptopro`
+3. Скачать `git clone github.com/towleeee/go-cryptopro`
 4. Запустить `go run main.go`
 
 ### ГОСТ Р 34.10-2012 (ЭЦП)
@@ -61,7 +61,7 @@ package main
 import (
 	"fmt"
 
-	gkeys "github.com/number571/go-cryptopro/gost_r_34_10_2012"
+	gkeys "github.com/towleeee/go-cryptopro/gost_r_34_10_2012"
 )
 
 func main() {
@@ -147,7 +147,7 @@ import (
 	"bytes"
 	"fmt"
 
-	gkeys "github.com/number571/go-cryptopro/gost_r_34_10_2012_eph"
+	gkeys "github.com/towleeee/go-cryptopro/gost_r_34_10_2012_eph"
 )
 
 func main() {
@@ -213,7 +213,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	ghash "github.com/number571/go-cryptopro/gost_r_34_11_2012"
+	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
 )
 
 func main() {
@@ -253,7 +253,7 @@ import (
 	"bytes"
 	"fmt"
 
-	gcipher "github.com/number571/go-cryptopro/gost_r_34_12_2015"
+	gcipher "github.com/towleeee/go-cryptopro/gost_r_34_12_2015"
 )
 
 func main() {
@@ -310,7 +310,7 @@ package main
 import (
 	"fmt"
 
-	grand "github.com/number571/go-cryptopro/gost_r_iso_28640_2012"
+	grand "github.com/towleeee/go-cryptopro/gost_r_iso_28640_2012"
 )
 
 func main() {

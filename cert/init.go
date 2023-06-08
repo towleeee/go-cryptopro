@@ -4,6 +4,8 @@ package cert
 #cgo LDFLAGS: -Wl,--allow-multiple-definition
 #cgo linux,amd64 CFLAGS: -DLINUX -DUNIX -DSIZEOF_VOID_P=8 -I/opt/cprocsp/include/ -I/opt/cprocsp/include/cpcsp -I/opt/cprocsp/include/pki
 #cgo linux,amd64 LDFLAGS: -L/opt/cprocsp/lib/amd64 -lcapi20 -lcapi10
+#cgo windows CFLAGS: -I/opt/cprocsp/include/cpcsp
+#cgo windows LDFLAGS: -lcrypt32 -lpthread
 */
 import "C"
 

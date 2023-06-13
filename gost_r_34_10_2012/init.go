@@ -67,6 +67,20 @@ func NewConfig(prov ProvType, container, password string) *Config {
 	}
 }
 
+// SimpleConfig - NewConfig without wrapping
+func SimpleConfig(prov ProvType, container, password string) *Config {
+	switch prov {
+	case K256, K512:
+		return (&Config{
+			prov:      prov,
+			container: container,
+			password:  password,
+		}).wrap()
+	default:
+		return nil
+	}
+}
+
 func (cfg *Config) wrap() *Config {
 	return &Config{
 		prov: cfg.prov,

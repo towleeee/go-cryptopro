@@ -71,11 +71,11 @@ func NewConfig(prov ProvType, container, password string) *Config {
 func SimpleConfig(prov ProvType, container, password string) *Config {
 	switch prov {
 	case K256, K512:
-		return (&Config{
+		return &Config{
 			prov:      prov,
 			container: container,
 			password:  password,
-		}).wrap()
+		}
 	default:
 		return nil
 	}

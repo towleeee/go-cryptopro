@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	cfg := gkeys.NewConfig(gkeys.K256, "username", "password")
+	// cfg := gkeys.NewConfig(gkeys.K256, "username", "password")
+	cfg := gkeys.SimpleConfig(gkeys.K256, "username", "password")
 
 	err := gkeys.GenPrivKey(cfg)
 	if err != nil {

@@ -10,6 +10,7 @@ package gost_r_34_10_2012
 import "C"
 import (
 	"encoding/hex"
+	"fmt"
 	"unsafe"
 
 	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
@@ -67,18 +68,33 @@ func NewConfig(prov ProvType, container, password string) *Config {
 	}
 }
 
-// SimpleConfig - NewConfig without wrapping
+// SimpleConfig - NewConfig with soft wrapping
 func SimpleConfig(prov ProvType, container, password string) *Config {
 	switch prov {
 	case K256, K512:
-		return &Config{
+		return (&Config{
 			prov:      prov,
 			container: container,
 			password:  password,
-		}
+		}).softWrap()
 	default:
 		return nil
 	}
+}
+
+// softWrap без хэша
+func (cfg *Config) softWrap() *Config {
+	dst := make([]byte, hex.EncodedLen(32))
+	_ = hex.Encode(dst, []byte(cfg.container))
+	dstP := make([]byte, hex.EncodedLen(32))
+	_ = hex.Encode(dstP, []byte(cfg.password))
+	c := &Config{
+		prov:      cfg.prov,
+		container: string(dst),
+		password:  string(dstP),
+	}
+	fmt.Println(fmt.Sprintf("%+v", c))
+	return c
 }
 
 func (cfg *Config) wrap() *Config {

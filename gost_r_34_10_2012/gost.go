@@ -240,7 +240,7 @@ func (key PrivKey256) PubKey() PubKey {
 		pbytes *C.uchar
 		prov   = key.prov()
 	)
-
+	fmt.Printf("key: %v", key)
 	ret := C.OpenContainer(
 		C.uchar(prov),
 		&hProv,
@@ -301,6 +301,11 @@ func (key PrivKey256) Type() string {
 // 81 - ГОСТ Р 34.10-2012 512.
 func (key PrivKey256) prov() ProvType {
 	return ProvType(key[0])
+}
+
+// containerLen return key len
+func (key PrivKey256) containerLen() int {
+	return len(key)
 }
 
 // Container name in bytes.

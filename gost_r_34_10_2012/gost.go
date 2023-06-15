@@ -87,8 +87,8 @@ type PrivKey256 []byte
 func GenPrivKey(cfg *Config) error {
 	ret := C.CreateContainer(
 		C.uchar(cfg.prov),
-		toCstring(cfg.container),
-		toCstring(cfg.password),
+		hexDecode(cfg.container),
+		hexDecode(cfg.password),
 	)
 	if ret < 0 {
 		panic(fmt.Errorf("error code: %d", ret))

@@ -84,7 +84,8 @@ func SimpleConfig(prov ProvType, container, password string) *Config {
 	}
 }
 
-func solt(data string) string {
+// salt добить до 32
+func salt(data string) string {
 	buf := bytes.NewBufferString(data)
 	h := ghash.Sum(ghash.ProvType(K256), buf.Bytes())
 	if len(data) < keyHashSize {
@@ -110,8 +111,8 @@ func solt(data string) string {
 func (cfg *Config) softWrap() *Config {
 	c := &Config{
 		prov:      cfg.prov,
-		container: solt(cfg.container),
-		password:  solt(cfg.password),
+		container: salt(cfg.container),
+		password:  salt(cfg.password),
 	}
 	fmt.Println(fmt.Sprintf("%+v", c))
 	return c

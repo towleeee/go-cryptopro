@@ -25,7 +25,7 @@ func main() {
 	pbytes := pub.Bytes()
 
 	msg := []byte("hello, world!")
-	sign, err := priv.Sign(msg)
+	sign, err := priv.Sign(msg, gkeys.AT_SIGNATURE)
 	if err != nil {
 		panic(err)
 	}

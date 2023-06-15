@@ -73,7 +73,7 @@ extern int CheckContainer(BYTE prov, BYTE *container, BYTE *password) {
 	return 0;
 }
 
-extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data, DWORD size, DWORD *dwSigLen) {
+extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data, DWORD size, DWORD *dwSigLen, DWORD spec) {
 	HCRYPTPROV hProv;
 	HCRYPTHASH hHash;
 	DWORD hashtype;
@@ -112,7 +112,7 @@ extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data,
 		return NULL;
 	}
 
-	if(!CryptSignHash(hHash, AT_SIGNATURE, NULL, 0, NULL, dwSigLen)) {
+	if(!CryptSignHash(hHash, spec, NULL, 0, NULL, dwSigLen)) {
 		PRINT_ERROR("SignMessage: CryptSignHash (1)");
 		CryptDestroyHash(hHash);
         CryptReleaseContext(hProv, 0);
@@ -121,7 +121,7 @@ extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data,
 
 	output = (BYTE*)malloc(sizeof(BYTE)*(*dwSigLen));
 
-	if(!CryptSignHash(hHash, AT_SIGNATURE, NULL, 0, output, dwSigLen)) {
+	if(!CryptSignHash(hHash, spec, NULL, 0, output, dwSigLen)) {
 		PRINT_ERROR("SignMessage: CryptSignHash (2)");
 		free(output);
 		CryptDestroyHash(hHash);

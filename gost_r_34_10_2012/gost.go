@@ -239,13 +239,13 @@ func (key PrivContainer) String() string {
 }
 
 // Signing information using the private key interface.
-func (key PrivKey512) Sign(dbytes []byte) ([]byte, error) {
-	return PrivKey256(key).Sign(dbytes)
+func (key PrivKey512) Sign(dbytes []byte, spec KeySpec) ([]byte, error) {
+	return PrivKey256(key).Sign(dbytes, spec)
 }
-func (key PrivContainer) Sign(dbytes []byte) ([]byte, error) {
-	return key.PrivKey.Sign(dbytes)
+func (key PrivContainer) Sign(dbytes []byte, spec KeySpec) ([]byte, error) {
+	return key.PrivKey.Sign(dbytes, spec)
 }
-func (key PrivKey256) Sign(dbytes []byte) ([]byte, error) {
+func (key PrivKey256) Sign(dbytes []byte, spec KeySpec) ([]byte, error) {
 	var (
 		datlen = len(dbytes)
 		reslen C.uint
@@ -259,6 +259,7 @@ func (key PrivKey256) Sign(dbytes []byte) ([]byte, error) {
 		toCbytes(dbytes),
 		C.uint(datlen),
 		&reslen,
+		C.uint(spec),
 	)
 	if result == nil {
 		return nil, fmt.Errorf("error: sign is nil")

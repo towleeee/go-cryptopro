@@ -40,7 +40,7 @@ type Address []byte
 type PrivKey interface {
 	Bytes() []byte
 	String() string
-	Sign(msg []byte) ([]byte, error)
+	Sign(msg []byte, spec KeySpec) ([]byte, error)
 	PubKey(spec KeySpec) PubKey
 	Equals(PrivKey) bool
 	Type() string

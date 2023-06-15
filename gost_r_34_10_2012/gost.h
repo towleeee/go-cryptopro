@@ -55,7 +55,7 @@ extern int CheckContainer(BYTE prov, BYTE *container, BYTE *password);
 // dwSigLen  - size of signature;
 // BYTE *(CheckPrivateKey) - pointer to digital signature ;
 // BYTE *(CheckPrivateKey) != NULL if success;
-extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data, DWORD size, DWORD *dwSigLen);
+extern BYTE *SignMessage(BYTE prov, BYTE *container, BYTE *password, BYTE *data, DWORD size, DWORD *dwSigLen, DWORD spec);
 
 // DESCRIPTION:
 // Signature verification function based on source data; 

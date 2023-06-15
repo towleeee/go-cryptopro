@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	gkeys.Debug = true
+	gkeys.Debug = false
 	// cfg := gkeys.NewConfig(gkeys.K256, "username", "password")
 	cfg := gkeys.SimpleConfig(gkeys.K256, "username", "password", gkeys.AT_SIGNATURE)
 	fmt.Printf("{cfg: %+v}", cfg)

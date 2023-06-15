@@ -289,7 +289,7 @@ func (key PrivKey256) PubKey(spec KeySpec) PubKey {
 		// keyType change key type AT_SIGNATURE / AT_KEYEXCHANGE
 
 	)
-	fmt.Printf("key: %v", key)
+	log(fmt.Sprintf("key: %+v", key))
 
 	ret := C.OpenContainer(
 		C.uchar(prov),

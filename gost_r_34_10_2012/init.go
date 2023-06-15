@@ -131,7 +131,7 @@ func (cfg *Config) softWrap() *Config {
 		password:  salt(cfg.password),
 		keySpec:   cfg.keySpec,
 	}
-	fmt.Println(fmt.Sprintf("%+v", c))
+	log(fmt.Sprintf("%+v", c))
 	return c
 }
 

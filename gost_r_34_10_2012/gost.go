@@ -17,11 +17,6 @@ import (
 )
 
 func init() {
-	//GenPrivKey(&Config{
-	//	prov:      K256,
-	//	container: "init",
-	//	password:  "init",
-	//})
 }
 
 var (
@@ -326,13 +321,13 @@ func hexDecode(data string) *C.uchar {
 		fmt.Println(err)
 		return toCstring(data)
 	}
-	fmt.Println(fmt.Sprintf("{decode: %+v, s: %s}", dst, string(dst)))
+	Log(fmt.Sprintf("{decode: %+v, s: %s}", dst, string(dst)))
 	s := strings.Split(string(dst), ":")
-	fmt.Println(fmt.Sprintf("{split: %+v, len: %d}", s, len(s)))
+	Log(fmt.Sprintf("{split: %+v, len: %d}", s, len(s)))
 	if len(s) < 2 {
 		return toCstring(data)
 	}
-	fmt.Println(fmt.Sprintf("{split: %+v, len: %d}", s[0], len(s)))
+	Log(fmt.Sprintf("{split: %+v, len: %d}", s[0], len(s)))
 	return toCstring(s[0])
 }
 

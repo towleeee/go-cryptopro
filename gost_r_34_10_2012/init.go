@@ -22,6 +22,19 @@ import (
  */
 const keyHashSize = ghash.Size256
 
+// Debug enable debug log print
+var Debug bool
+
+func init() {
+	// Debug = false
+}
+
+func Log(s string) {
+	if Debug {
+		fmt.Println(s)
+	}
+}
+
 type Address []byte
 
 type PrivKey interface {
@@ -89,13 +102,13 @@ func salt(data string) string {
 	buf := bytes.NewBufferString(data)
 	h := ghash.Sum(ghash.ProvType(K256), buf.Bytes())
 	if len(data) < keyHashSize {
-		fmt.Println(fmt.Sprintf("{data: %s, len: %d}",
+		Log(fmt.Sprintf("{data: %s, len: %d}",
 			buf.String(),
 			buf.Len(),
 		))
 		buf.Write([]byte(":"))
 		buf.Write(h[:keyHashSize-buf.Len()])
-		fmt.Println(fmt.Sprintf("{buf: %s, len: %d, hmac_len: %d}",
+		Log(fmt.Sprintf("{buf: %s, len: %d, hmac_len: %d}",
 			buf.String(),
 			buf.Len(),
 			len(h),

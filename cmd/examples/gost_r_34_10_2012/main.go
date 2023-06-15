@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	// gkeys.Debug = true
 	// cfg := gkeys.NewConfig(gkeys.K256, "username", "password")
 	cfg := gkeys.SimpleConfig(gkeys.K256, "username", "password")
 

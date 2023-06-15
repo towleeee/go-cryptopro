@@ -29,7 +29,7 @@ func init() {
 	// Debug = false
 }
 
-func Log(s string) {
+func log(s string) {
 	if Debug {
 		fmt.Println(s)
 	}
@@ -41,7 +41,7 @@ type PrivKey interface {
 	Bytes() []byte
 	String() string
 	Sign(msg []byte) ([]byte, error)
-	PubKey() PubKey
+	PubKey(spec KeySpec) PubKey
 	Equals(PrivKey) bool
 	Type() string
 }
@@ -68,6 +68,7 @@ type Config struct {
 	prov      ProvType
 	container string
 	password  string
+	keySpec   KeySpec
 }
 
 func NewConfig(prov ProvType, container, password string) *Config {
@@ -77,6 +78,7 @@ func NewConfig(prov ProvType, container, password string) *Config {
 			prov:      prov,
 			container: container,
 			password:  password,
+			keySpec:   AT_SIGNATURE,
 		}).wrap()
 	default:
 		return nil
@@ -84,13 +86,14 @@ func NewConfig(prov ProvType, container, password string) *Config {
 }
 
 // SimpleConfig - NewConfig with soft wrapping
-func SimpleConfig(prov ProvType, container, password string) *Config {
+func SimpleConfig(prov ProvType, container, password string, spec KeySpec) *Config {
 	switch prov {
 	case K256, K512:
 		return (&Config{
 			prov:      prov,
 			container: container,
 			password:  password,
+			keySpec:   spec,
 		}).softWrap()
 	default:
 		return nil
@@ -102,13 +105,13 @@ func salt(data string) string {
 	buf := bytes.NewBufferString(data)
 	h := ghash.Sum(ghash.ProvType(K256), buf.Bytes())
 	if len(data) < keyHashSize {
-		Log(fmt.Sprintf("{data: %s, len: %d}",
+		log(fmt.Sprintf("{data: %s, len: %d}",
 			buf.String(),
 			buf.Len(),
 		))
 		buf.Write([]byte(":"))
 		buf.Write(h[:keyHashSize-buf.Len()])
-		Log(fmt.Sprintf("{buf: %s, len: %d, hmac_len: %d}",
+		log(fmt.Sprintf("{buf: %s, len: %d, hmac_len: %d}",
 			buf.String(),
 			buf.Len(),
 			len(h),
@@ -126,6 +129,7 @@ func (cfg *Config) softWrap() *Config {
 		prov:      cfg.prov,
 		container: salt(cfg.container),
 		password:  salt(cfg.password),
+		keySpec:   cfg.keySpec,
 	}
 	fmt.Println(fmt.Sprintf("%+v", c))
 	return c

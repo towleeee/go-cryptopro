@@ -7,10 +7,10 @@ import (
 )
 
 func main() {
-	// gkeys.Debug = true
+	gkeys.Debug = true
 	// cfg := gkeys.NewConfig(gkeys.K256, "username", "password")
-	cfg := gkeys.SimpleConfig(gkeys.K256, "username", "password")
-
+	cfg := gkeys.SimpleConfig(gkeys.K256, "username", "password", gkeys.AT_SIGNATURE)
+	fmt.Printf("{cfg: %+v}", cfg)
 	err := gkeys.GenPrivKey(cfg)
 	if err != nil {
 		fmt.Println("Warning: key already exist?")
@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	pub := priv.PubKey()
+	pub := priv.PubKey(gkeys.AT_SIGNATURE)
 	pbytes := pub.Bytes()
 
 	msg := []byte("hello, world!")

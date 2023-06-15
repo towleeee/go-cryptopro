@@ -36,6 +36,17 @@ const (
 	K512 ProvType = 81
 )
 
+// KeySpec Тип ключевой пары, использующейся при подписи значения функции хеширования.
+// Могут быть использованы следующие значения:
+// AT_KEYEXCHANGE 	Ключевая пара обмена
+// AT_SIGNATURE 	Ключевая пара цифровой подписи
+type KeySpec int
+
+const (
+	AT_KEYEXCHANGE KeySpec = C.AT_KEYEXCHANGE
+	AT_SIGNATURE   KeySpec = C.AT_SIGNATURE
+)
+
 const (
 	KeyType = "ГОСТ Р 34.10-2012"
 )
@@ -77,9 +88,30 @@ func (k ProvType) String() string {
 type PrivKey512 PrivKey256
 type PrivKey256 []byte
 
+type PrivContainer struct {
+	PrivKey PrivKey
+	KeySpec KeySpec
+}
+
 // Creation of a container with a binding to a password
 // and generation of a private key.
 func GenPrivKey(cfg *Config) error {
+	log(fmt.Sprintf("GenPrivKey:{cont: %s}", cfg.container))
+	ret := C.CreateContainer(
+		C.uchar(cfg.prov),
+		hexDecode(cfg.container),
+		hexDecode(cfg.password),
+	)
+	if ret < 0 {
+		panic(fmt.Errorf("error code: %d", ret))
+	}
+	if ret > 0 {
+		return fmt.Errorf("key already exists")
+	}
+	return nil
+}
+
+func (key PrivContainer) GenPrivKey(cfg *Config) error {
 	ret := C.CreateContainer(
 		C.uchar(cfg.prov),
 		hexDecode(cfg.container),
@@ -99,8 +131,8 @@ func GenPrivKey(cfg *Config) error {
 func NewPrivKey(cfg *Config) (PrivKey, error) {
 	ret := C.CheckContainer(
 		C.uchar(cfg.prov),
-		toCstring(cfg.container),
-		toCstring(cfg.password),
+		hexDecode(cfg.container),
+		hexDecode(cfg.password),
 	)
 	if ret < 0 {
 		return nil, fmt.Errorf("error: private key is nil")
@@ -117,7 +149,12 @@ func NewPrivKey(cfg *Config) (PrivKey, error) {
 
 	switch cfg.prov {
 	case K256:
-		return PrivKey256(privraw), nil
+		// return PrivKey256(privraw), nil
+		return PrivContainer{
+			PrivKey: PrivKey256(privraw),
+			KeySpec: cfg.keySpec,
+		}, nil
+
 	case K512:
 		return PrivKey512(privraw), nil
 	default:
@@ -181,6 +218,9 @@ func (key PrivKey512) Bytes() []byte {
 func (key PrivKey256) Bytes() []byte {
 	return []byte(key)
 }
+func (key PrivContainer) Bytes() []byte {
+	return key.PrivKey.Bytes()
+}
 
 // Translating the PrivKey interface into a string of the form
 // "Priv(ГОСТ Р 34.10-2012_???)(container_name container_password)".
@@ -194,10 +234,16 @@ func (key PrivKey256) String() string {
 		toGOstring(key.password()),
 	)
 }
+func (key PrivContainer) String() string {
+	return key.PrivKey.String()
+}
 
 // Signing information using the private key interface.
 func (key PrivKey512) Sign(dbytes []byte) ([]byte, error) {
 	return PrivKey256(key).Sign(dbytes)
+}
+func (key PrivContainer) Sign(dbytes []byte) ([]byte, error) {
+	return key.PrivKey.Sign(dbytes)
 }
 func (key PrivKey256) Sign(dbytes []byte) ([]byte, error) {
 	var (
@@ -226,10 +272,13 @@ func (key PrivKey256) Sign(dbytes []byte) ([]byte, error) {
 
 // Getting the public key interface
 // from the private key interface.
-func (key PrivKey512) PubKey() PubKey {
-	return PrivKey256(key).PubKey()
+func (key PrivKey512) PubKey(spec KeySpec) PubKey {
+	return PrivKey256(key).PubKey(spec)
 }
-func (key PrivKey256) PubKey() PubKey {
+func (key PrivContainer) PubKey(spec KeySpec) PubKey {
+	return key.PrivKey.PubKey(key.KeySpec)
+}
+func (key PrivKey256) PubKey(spec KeySpec) PubKey {
 	var (
 		hProv  C.HCRYPTPROV
 		hKey   C.HCRYPTKEY
@@ -237,7 +286,7 @@ func (key PrivKey256) PubKey() PubKey {
 		pbytes *C.uchar
 		prov   = key.prov()
 		// keyType change key type AT_SIGNATURE / AT_KEYEXCHANGE
-		keyType = C.AT_SIGNATURE
+
 	)
 	fmt.Printf("key: %v", key)
 
@@ -247,7 +296,7 @@ func (key PrivKey256) PubKey() PubKey {
 		&hKey,
 		key.container(),
 		key.password(),
-		C.uint(keyType),
+		C.uint(spec),
 	)
 	if ret < 0 {
 		panic(fmt.Errorf("error code: %d", ret))
@@ -285,6 +334,9 @@ func (key PrivKey256) PubKey() PubKey {
 func (key PrivKey512) Equals(cmp PrivKey) bool {
 	return PrivKey256(key).Equals(cmp)
 }
+func (key PrivContainer) Equals(cmp PrivKey) bool {
+	return key.PrivKey.Equals(cmp)
+}
 func (key PrivKey256) Equals(cmp PrivKey) bool {
 	return bytes.Equal(key.Bytes(), cmp.Bytes())
 }
@@ -292,6 +344,9 @@ func (key PrivKey256) Equals(cmp PrivKey) bool {
 // Retrieving a format string "ГОСТ Р 34.10-2012_???".
 func (key PrivKey512) Type() string {
 	return PrivKey256(key).Type()
+}
+func (key PrivContainer) Type() string {
+	return key.PrivKey.Type()
 }
 func (key PrivKey256) Type() string {
 	return fmt.Sprintf("%s %s", KeyType, key.prov())
@@ -321,13 +376,13 @@ func hexDecode(data string) *C.uchar {
 		fmt.Println(err)
 		return toCstring(data)
 	}
-	Log(fmt.Sprintf("{decode: %+v, s: %s}", dst, string(dst)))
+	log(fmt.Sprintf("{decode: %+v, s: %s}", dst, string(dst)))
 	s := strings.Split(string(dst), ":")
-	Log(fmt.Sprintf("{split: %+v, len: %d}", s, len(s)))
+	log(fmt.Sprintf("{split: %+v, len: %d}", s, len(s)))
 	if len(s) < 2 {
 		return toCstring(data)
 	}
-	Log(fmt.Sprintf("{split: %+v, len: %d}", s[0], len(s)))
+	log(fmt.Sprintf("{split_return: %+v, len: %d}", s[0], len(s)))
 	return toCstring(s[0])
 }
 

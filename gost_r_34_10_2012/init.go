@@ -9,6 +9,7 @@ package gost_r_34_10_2012
 */
 import "C"
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
 	"unsafe"
@@ -19,6 +20,7 @@ import (
 /*
  * INTERFACES
  */
+const keyHashSize = ghash.Size256
 
 type Address []byte
 
@@ -82,16 +84,34 @@ func SimpleConfig(prov ProvType, container, password string) *Config {
 	}
 }
 
+func solt(data string) string {
+	buf := bytes.NewBufferString(data)
+	h := ghash.Sum(ghash.ProvType(K256), buf.Bytes())
+	if len(data) < keyHashSize {
+		fmt.Println(fmt.Sprintf("{data: %s, len: %d}",
+			buf.String(),
+			buf.Len(),
+		))
+		buf.Write([]byte(":"))
+		buf.Write(h[:keyHashSize-buf.Len()])
+		fmt.Println(fmt.Sprintf("{buf: %s, len: %d, hmac_len: %d}",
+			buf.String(),
+			buf.Len(),
+			len(h),
+		),
+		)
+	}
+	dst := make([]byte, hex.EncodedLen(keyHashSize))
+	_ = hex.Encode(dst, buf.Bytes())
+	return string(dst)
+}
+
 // softWrap без хэша
 func (cfg *Config) softWrap() *Config {
-	dst := make([]byte, hex.EncodedLen(32))
-	_ = hex.Encode(dst, []byte(cfg.container))
-	dstP := make([]byte, hex.EncodedLen(32))
-	_ = hex.Encode(dstP, []byte(cfg.password))
 	c := &Config{
 		prov:      cfg.prov,
-		container: string(dst),
-		password:  string(dstP),
+		container: solt(cfg.container),
+		password:  solt(cfg.password),
 	}
 	fmt.Println(fmt.Sprintf("%+v", c))
 	return c

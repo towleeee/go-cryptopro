@@ -8,7 +8,9 @@ package gost_r_34_10_2012
 import "C"
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
+	"strings"
 	"unsafe"
 
 	ghash "github.com/towleeee/go-cryptopro/gost_r_34_11_2012"
@@ -310,12 +312,30 @@ func (key PrivKey256) containerLen() int {
 
 // Container name in bytes.
 func (key PrivKey256) container() *C.uchar {
-	return toCstring(string(key[1 : ContainerLen+1]))
+	return hexDecode(string(key[1 : ContainerLen+1]))
+}
+
+func hexDecode(data string) *C.uchar {
+	dst := make([]byte, hex.DecodedLen(len(data)))
+	_, err := hex.Decode(dst, []byte(data))
+	if err != nil {
+		fmt.Println(err)
+		return toCstring(data)
+	}
+	fmt.Println(fmt.Sprintf("{decode: %+v, s: %s}", dst, string(dst)))
+	s := strings.Split(string(dst), ":")
+	fmt.Println(fmt.Sprintf("{split: %+v, len: %d}", s, len(s)))
+	if len(s) < 2 {
+		return toCstring(data)
+	}
+	fmt.Println(fmt.Sprintf("{split: %+v, len: %d}", s[0], len(s)))
+	return toCstring(s[0])
 }
 
 // Container password in bytes.
 func (key PrivKey256) password() *C.uchar {
-	return toCstring(string(key[ContainerLen+1:]))
+	// return toCstring(string(key[ContainerLen+1:]))
+	return hexDecode(string(key[ContainerLen+1:]))
 }
 
 /*

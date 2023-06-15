@@ -1,6 +1,13 @@
 # Go КриптоПро
-> Интерфейсы адаптированы под ядро Tendermint
-> https://github.com/towleeee/tendermint
+[[_TOC_]]
+___
+> Форк с проеета
+> https://github.com/number571/go-cryptopro
+
+### Changelog
+ * gost_r_34_10_2012:
+      - SimpleConfig - импорт контейнера
+      - KeySpec - выбор ключа из хранилища
 
 ### Реализация
 * ГОСТ Р 34.10-2012 (ЭЦП, ЭК)

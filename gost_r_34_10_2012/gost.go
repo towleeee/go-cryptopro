@@ -241,14 +241,18 @@ func (key PrivKey256) PubKey() PubKey {
 		publen C.uint
 		pbytes *C.uchar
 		prov   = key.prov()
+		// keyType change key type AT_SIGNATURE / AT_KEYEXCHANGE
+		keyType = C.AT_SIGNATURE
 	)
 	fmt.Printf("key: %v", key)
+
 	ret := C.OpenContainer(
 		C.uchar(prov),
 		&hProv,
 		&hKey,
 		key.container(),
 		key.password(),
+		C.uint(keyType),
 	)
 	if ret < 0 {
 		panic(fmt.Errorf("error code: %d", ret))

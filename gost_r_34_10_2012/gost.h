@@ -26,7 +26,7 @@ extern int CreateContainer(BYTE prov, BYTE *container, BYTE *password);
 // OUTPUT:
 // hKey      - initialized pointer to a public key;
 // int (OpenContainer) = 0 if success;
-extern int OpenContainer(BYTE prov, HCRYPTPROV *hProv, HCRYPTKEY *hKey, BYTE *container, BYTE *password);
+extern int OpenContainer(BYTE prov, HCRYPTPROV *hProv, HCRYPTKEY *hKey, BYTE *container, BYTE *password, DWORD keyType);
 
 // DESCRIPTION:
 // Function for checking the existence of a private key 

@@ -33,7 +33,7 @@ extern int CreateContainer(BYTE prov, BYTE *container, BYTE *password) {
 	return 0;
 }
 
-extern int OpenContainer(BYTE prov, HCRYPTPROV *hProv, HCRYPTKEY *hKey, BYTE *container, BYTE *password) {
+extern int OpenContainer(BYTE prov, HCRYPTPROV *hProv, HCRYPTKEY *hKey, BYTE *container, BYTE *password, DWORD keyType) {
 	if (!CryptAcquireContext(hProv, container, NULL, prov, 0)) {
 		PRINT_ERROR("OpenContainer: CryptAcquireContext");
 		return -1;
@@ -45,7 +45,7 @@ extern int OpenContainer(BYTE prov, HCRYPTPROV *hProv, HCRYPTKEY *hKey, BYTE *co
         return -2;
     }
 
-	if(!CryptGetUserKey(*hProv, AT_SIGNATURE, hKey)) {
+	if(!CryptGetUserKey(*hProv, keyType, hKey)) {
         PRINT_ERROR("OpenContainer: CryptGetUserKey");
 		CryptReleaseContext(*hProv, 0);
         return -3;
